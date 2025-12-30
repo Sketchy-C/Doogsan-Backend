@@ -130,8 +130,56 @@ class TripBookingSerializer(serializers.ModelSerializer):
 # =========================
 # TRANSACTIONS
 # =========================
+from rest_framework import serializers
+from .models import Transaction
 
 class TransactionSerializer(serializers.ModelSerializer):
+    AcctNo = serializers.CharField(source="acct_no")
+    Amount = serializers.DecimalField(
+        max_digits=15, decimal_places=2, source="amount"
+    )
+    BookedBalance = serializers.CharField(source="booked_balance")
+    ClearedBalance = serializers.CharField(source="cleared_balance")
+    Currency = serializers.CharField(source="currency")
+
+    CustMemoLine1 = serializers.CharField(
+        source="cust_memo_line1", allow_blank=True, required=False
+    )
+    CustMemoLine2 = serializers.CharField(
+        source="cust_memo_line2", allow_blank=True, required=False
+    )
+    CustMemoLine3 = serializers.CharField(
+        source="cust_memo_line3", allow_blank=True, required=False
+    )
+
+    EventType = serializers.CharField(source="event_type")
+    ExchangeRate = serializers.CharField(
+        source="exchange_rate", allow_blank=True, required=False
+    )
+    Narration = serializers.CharField(source="narration")
+    PaymentRef = serializers.CharField(source="payment_ref")
+    PostingDate = serializers.CharField(source="posting_date")
+    ValueDate = serializers.CharField(source="value_date")
+    TransactionDate = serializers.CharField(source="transaction_date")
+    TransactionId = serializers.CharField(source="transaction_id")
+
     class Meta:
         model = Transaction
-        fields = '__all__'
+        fields = [
+            "AcctNo",
+            "Amount",
+            "BookedBalance",
+            "ClearedBalance",
+            "Currency",
+            "CustMemoLine1",
+            "CustMemoLine2",
+            "CustMemoLine3",
+            "EventType",
+            "ExchangeRate",
+            "Narration",
+            "PaymentRef",
+            "PostingDate",
+            "ValueDate",
+            "TransactionDate",
+            "TransactionId",
+        ]

@@ -49,10 +49,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',  
     'django_filters',            
     # Local 
-    'doogsan_app',
+    # 'doogsan_app',
     #Cloudinary
     'cloudinary',
     'cloudinary_storage',
+    #Signals
+    'doogsan_app.apps.DoogsanAppConfig',
 ]
 
 MIDDLEWARE = [

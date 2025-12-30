@@ -38,20 +38,48 @@ class Trip(models.Model):
         return self.title
     
 
+from django.db import models
+
 class Transaction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(
-        max_length=20,
-        choices=(
-            ('pending', 'Pending'),
-            ('completed', 'Completed'),
-            ('failed', 'Failed'),
-        )
+    acct_no = models.CharField(max_length=50,  )
+    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+
+    booked_balance = models.CharField(max_length=50,  )
+    cleared_balance = models.CharField(max_length=50,  )
+
+    currency = models.CharField(max_length=10,  )
+
+    cust_memo_line1 = models.CharField(max_length=255, blank=True,  )
+    cust_memo_line2 = models.CharField(max_length=255, blank=True,  )
+    cust_memo_line3 = models.CharField(max_length=255, blank=True,  )
+
+    event_type = models.CharField(max_length=20,  )
+    exchange_rate = models.CharField(max_length=50, blank=True,  )
+
+    narration = models.CharField(max_length=255,  )
+
+    payment_ref = models.CharField(
+        max_length=100,
+        unique=True,
+         
     )
-    reference = models.CharField(max_length=100, unique=True)
+
+    posting_date = models.CharField(max_length=50,  )
+    value_date = models.CharField(max_length=50,  )
+    transaction_date = models.CharField(max_length=50,  )
+
+    transaction_id = models.CharField(
+        max_length=100,
+        unique=True,
+         
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.transaction_id
+
+
 
 class TripBooking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

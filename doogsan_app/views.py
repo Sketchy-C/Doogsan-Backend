@@ -1,9 +1,11 @@
 # doogsan_app/views.py
 from rest_framework import viewsets, status
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
@@ -18,6 +20,9 @@ from .serializers import (
     UserSerializer,
     TripImageSerializer
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -99,11 +104,6 @@ class TripAllBookingViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class TransactionViewSet(viewsets.ModelViewSet):
-    queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
-    permission_classes = [IsAuthenticated]
-
 
 User = get_user_model()
 
@@ -120,3 +120,38 @@ class TripImageViewSet(viewsets.ModelViewSet):
     queryset = TripImage.objects.all()
     serializer_class = TripImageSerializer
     permission_classes = [IsAuthenticated]
+
+
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request):
+        user = request.user
+
+        # Make sure to handle string/related object role
+        role_name = getattr(user.role, "name", str(user.role))  # works for both cases
+        if role_name.strip().lower() != "admin":
+            logger.warning("Permission denied: User is not admin %s", role_name)
+            raise PermissionDenied("Admin access required")
+
+        return super().list(request)
+
+
+    def create(self, request):
+        """
+        POST /transactions/ --> Authenticated users
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()  # no user field assumed
+        return Response(
+            {
+                "MessageCode": "200",
+                "Message": "Successfully received data",
+                "data": serializer.data
+            },
+            status=status.HTTP_201_CREATED
+        )
