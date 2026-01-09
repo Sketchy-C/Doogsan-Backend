@@ -1,0 +1,4 @@
+[project]
+src = /home/exhibits-dev2/Files/Work/Doogsan-New2.0/backend/doogsan_app
+scripts = ../manage.py
+

@@ -34,3 +34,11 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+
+
+# Keep original source private
+doogsan_app_original/
+
+# PyArmor artifacts (optional)
+__pycache__/
+*.pyc
